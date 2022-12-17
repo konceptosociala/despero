@@ -14,6 +14,7 @@ pub type Filter = vk::Filter;
 #[derive(Copy, Clone, Debug)]
 pub struct TexturedVertexData {
 	pub position: [f32; 3],
+	pub normal: [f32; 3],
 	pub texcoord: [f32; 2],
 }
 
@@ -24,26 +25,23 @@ pub struct TexturedInstanceData {
 	pub modelmatrix: [[f32; 4]; 4],
 	pub inverse_modelmatrix: [[f32; 4]; 4],
 	pub texture_id: u32,
+	pub metallic: f32,
+	pub roughness: f32,
 }
 
 impl TexturedInstanceData {
-	pub fn from_matrix(
-		modelmatrix: na::Matrix4<f32>
-	) -> TexturedInstanceData {
-		TexturedInstanceData {
-			modelmatrix: modelmatrix.into(),
-			inverse_modelmatrix: modelmatrix.try_inverse().unwrap().into(),
-			texture_id: 0,
-		}
-	}
-	pub fn from_matrix_and_texture(
+	pub fn new(
 		modelmatrix: na::Matrix4<f32>,
 		texture_id: usize,
+		metallic: f32,
+		roughness: f32,
 	) -> TexturedInstanceData {
 		TexturedInstanceData {
 			modelmatrix: modelmatrix.into(),
 			inverse_modelmatrix: modelmatrix.try_inverse().unwrap().into(),
 			texture_id: texture_id as u32,
+			metallic,
+			roughness,
 		}
 	}
 }

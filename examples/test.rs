@@ -10,7 +10,7 @@ use despero::{
 		camera::Camera,
 		debug::Debug,
 		screenshot::Screenshot,
-		//light::*,
+		light::*,
 		texture::{
 			Filter,
 			TexturedInstanceData,
@@ -31,19 +31,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	let second_texture_id = despero.texture_from_file("assets/image2.jpg", Filter::LINEAR)?;
 	let third_texture_id = despero.texture_from_file("assets/image.jpg", Filter::NEAREST)?;
 	
-	quad.insert_visibly(TexturedInstanceData::from_matrix_and_texture(
+	quad.insert_visibly(TexturedInstanceData::new(
 		na::Matrix4::identity(),
 		texture_id,
+		0.0,
+		1.0,
 	));
 	
-	quad.insert_visibly(TexturedInstanceData::from_matrix_and_texture(
+	quad.insert_visibly(TexturedInstanceData::new(
         na::Matrix4::new_translation(&na::Vector3::new(2.0, 0., 0.3)),
         second_texture_id,
+        0.0,
+		1.0,
     ));
 	
-	quad.insert_visibly(TexturedInstanceData::from_matrix_and_texture(
+	quad.insert_visibly(TexturedInstanceData::new(
         na::Matrix4::new_translation(&na::Vector3::new(5.0, 0., 0.3)),
         third_texture_id,
+        0.0,
+		1.0,
     ));
 	
 	/*for i in 0..10 {
@@ -66,7 +72,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 	//Camera
 	let mut camera = Camera::builder().build();
 	// Lights
-	/*let mut lights = LightManager::default();
+	let mut lights = LightManager::default();
 	lights.add_light(DirectionalLight {
 		direction: na::Vector3::new(-1., -1., 0.),
 		illuminance: [0.5, 0.5, 0.5],
@@ -89,7 +95,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 		&mut despero.allocator, 
 		&mut despero.lightbuffer, 
 		&mut despero.descriptor_sets_light
-	)?;*/
+	)?;
 	
 	eventloop.run(move |event, _, controlflow| match event {
 		Event::WindowEvent {

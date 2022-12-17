@@ -604,18 +604,22 @@ impl Model<TexturedVertexData, TexturedInstanceData> {
 	pub fn quad() -> Self {
 		let lb = TexturedVertexData {
 			position: [-1.0, 1.0, 0.0],
+			normal: VertexData::normalize([-1.0, 1.0, 0.0]),
 			texcoord: [0.0, 1.0],
 		};
 		let lt = TexturedVertexData {
 			position: [-1.0, -1.0, 0.0],
+			normal: VertexData::normalize([-1.0, -1.0, 0.0]),
 			texcoord: [0.0, 0.0],
 		};
 		let rb = TexturedVertexData {
 			position: [1.0, 1.0, 0.0],
+			normal: VertexData::normalize([1.0, 1.0, 0.0]),
 			texcoord: [1.0, 1.0],
 		};
 		let rt = TexturedVertexData {
 			position: [1.0, -1.0, 0.0],
+			normal: VertexData::normalize([1.0, -1.0, 0.0]),
 			texcoord: [1.0, 0.0],
 		};
 		

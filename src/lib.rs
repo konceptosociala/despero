@@ -83,7 +83,7 @@ pub struct Despero {
 	pub descriptor_pool: vk::DescriptorPool,
 	pub descriptor_sets_camera: Vec<vk::DescriptorSet>, 
 	pub descriptor_sets_texture: Vec<vk::DescriptorSet>,
-	//pub descriptor_sets_light: Vec<vk::DescriptorSet>, 
+	pub descriptor_sets_light: Vec<vk::DescriptorSet>, 
 }
 
 impl Despero {
@@ -172,18 +172,18 @@ impl Despero {
 				descriptor_count: swapchain.amount_of_images,
 			},
 			vk::DescriptorPoolSize {
-				ty: vk::DescriptorType::STORAGE_BUFFER,
-				descriptor_count: swapchain.amount_of_images,
-			},
-			vk::DescriptorPoolSize {
 				ty: vk::DescriptorType::COMBINED_IMAGE_SAMPLER,
 				descriptor_count: MAX_NUMBER_OF_TEXTURES * swapchain.amount_of_images,
+			},
+			vk::DescriptorPoolSize {
+				ty: vk::DescriptorType::STORAGE_BUFFER,
+				descriptor_count: swapchain.amount_of_images,
 			},
 		];
 		// PoolCreateInfo
 		let descriptor_pool_info = vk::DescriptorPoolCreateInfo::builder()
 			// Amount of descriptors
-			.max_sets(2 * swapchain.amount_of_images)
+			.max_sets(3 * swapchain.amount_of_images)
 			// Size of pool
 			.pool_sizes(&pool_sizes); 
 		let descriptor_pool = unsafe { logical_device.create_descriptor_pool(&descriptor_pool_info, None) }?;
@@ -232,7 +232,7 @@ impl Despero {
 		// Descriptor sets (Light)
 		//
 		// Descriptor layouts (Light)
-		/*let desc_layouts_light = vec![pipeline.descriptor_set_layouts[1]; swapchain.amount_of_images as usize];
+		let desc_layouts_light = vec![pipeline.descriptor_set_layouts[2]; swapchain.amount_of_images as usize];
 		// SetAllocateInfo (Light)
 		let descriptor_set_allocate_info_light = vk::DescriptorSetAllocateInfo::builder()
 			// DescPool
@@ -255,7 +255,7 @@ impl Despero {
 				.build()
 			];
 			unsafe { logical_device.update_descriptor_sets(&desc_sets_write, &[]) };
-		}*/
+		}
 		 
 		Ok(Despero {
 			window,
@@ -281,7 +281,7 @@ impl Despero {
 			descriptor_pool,
 			descriptor_sets_camera,
 			descriptor_sets_texture,
-			//descriptor_sets_light,
+			descriptor_sets_light,
 		})
 	}
 	
@@ -338,7 +338,7 @@ impl Despero {
 				&[
 					self.descriptor_sets_camera[index],
 					self.descriptor_sets_texture[index],
-					//self.descriptor_sets_light[index],
+					self.descriptor_sets_light[index],
 				],
 				&[],
 			);

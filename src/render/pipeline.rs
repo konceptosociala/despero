@@ -5,7 +5,8 @@ use crate::render::{
 	swapchain::Swapchain,
 };
 
-pub const MAX_NUMBER_OF_TEXTURES: u32 = 393210;
+//~ pub const MAX_NUMBER_OF_TEXTURES: u32 = 393210;
+pub const MAX_NUMBER_OF_TEXTURES: u32 = 3;
 
 // Pipeline
 pub struct GraphicsPipeline {
@@ -300,11 +301,11 @@ impl GraphicsPipeline {
 	) -> Result<GraphicsPipeline, vk::Result>{
 		// Include shaders
 		let vertexshader_createinfo = vk::ShaderModuleCreateInfo::builder().code(vk_shader_macros::include_glsl!(
-			"./shaders/vertex_textured.glsl", 
+			"./shaders/vertex_combined.glsl", 
 			kind: vert,
 		));
 		let fragmentshader_createinfo = vk::ShaderModuleCreateInfo::builder().code(vk_shader_macros::include_glsl!(
-			"./shaders/fragment_textured.glsl",
+			"./shaders/fragment_combined.glsl",
 			kind: frag,
 		));
 		let vertexshader_module = unsafe { logical_device.create_shader_module(&vertexshader_createinfo, None)? };
@@ -338,72 +339,90 @@ impl GraphicsPipeline {
 				binding: 0,
 				location: 1,
 				offset: 12,
+				format: vk::Format::R32G32B32_SFLOAT,
+			},
+			vk::VertexInputAttributeDescription {
+				binding: 0,
+				location: 2,
+				offset: 24,
 				format: vk::Format::R32G32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 2,
+				location: 3,
 				offset: 0,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 3,
+				location: 4,
 				offset: 16,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 4,
+				location: 5,
 				offset: 32,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 5,
+				location: 6,
 				offset: 48,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 6,
+				location: 7,
 				offset: 64,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 7,
+				location: 8,
 				offset: 80,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 8,
+				location: 9,
 				offset: 96,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription {
 				binding: 1,
-				location: 9,
+				location: 10,
 				offset: 112,
 				format: vk::Format::R32G32B32A32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription{
 				binding: 1,
-				location: 10,
+				location: 11,
 				offset: 128,
 				format: vk::Format::R8G8B8A8_UINT,
+			},
+			vk::VertexInputAttributeDescription{
+				binding: 1,
+				location: 12,
+				offset: 132,
+				format: vk::Format::R32_SFLOAT,
+			},
+			vk::VertexInputAttributeDescription{
+				binding: 1,
+				location: 13,
+				offset: 136,
+				format: vk::Format::R32_SFLOAT,
 			},
 		];
 		let vertex_binding_descs = [
 			vk::VertexInputBindingDescription {
 				binding: 0,
-				stride: 20,
+				stride: 32,
 				input_rate: vk::VertexInputRate::VERTEX,
 			},
 			vk::VertexInputBindingDescription {
 				binding: 1,
-				stride: 132,
+				stride: 140,
 				input_rate: vk::VertexInputRate::INSTANCE,
 			},
 		];
@@ -471,16 +490,13 @@ impl GraphicsPipeline {
 		
 		// Bind resource descriptor
 		//
+		//
 		// 0
 		let descriptorset_layout_binding_descs0 = [
 			vk::DescriptorSetLayoutBinding::builder()
-				// Binding = 0
 				.binding(0)
-				// Resource type = uniform buffer
 				.descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
-				// Descriptor count = 1
 				.descriptor_count(1)
-				// Use the buffer in vertex shaders only
 				.stage_flags(vk::ShaderStageFlags::VERTEX)
 				.build()
 		];
@@ -503,10 +519,27 @@ impl GraphicsPipeline {
 		let descriptorsetlayout1 = unsafe {
 			logical_device.create_descriptor_set_layout(&descriptorset_layout_info1, None)
 		}?;
+		//
+		//
+		// 2
+		let descriptorset_layout_binding_descs2 = [
+			vk::DescriptorSetLayoutBinding::builder()
+				.binding(0)
+				.descriptor_type(vk::DescriptorType::STORAGE_BUFFER)
+				.descriptor_count(1)
+				.stage_flags(vk::ShaderStageFlags::FRAGMENT)
+				.build()
+		];
+		let descriptorset_layout_info2 = vk::DescriptorSetLayoutCreateInfo::builder()
+			.bindings(&descriptorset_layout_binding_descs2);
+		let descriptorsetlayout2 = unsafe {
+			logical_device.create_descriptor_set_layout(&descriptorset_layout_info2, None)
+		}?;
 		
 		let desclayouts = vec![
 			descriptorsetlayout0,
 			descriptorsetlayout1,
+			descriptorsetlayout2,
 		];
 		
 		// Pipeline layout
