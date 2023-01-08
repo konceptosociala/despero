@@ -2,7 +2,6 @@ use ash::vk;
 use std::mem::size_of;
 use gpu_allocator::MemoryLocation;
 use hecs_schedule::*;
-use nalgebra as na;
 
 use crate::render::{
 	renderer::Renderer,
@@ -295,22 +294,4 @@ pub fn update_lights(
 		unsafe { renderer.device.update_descriptor_sets(&desc_sets_write, &[]) };
 	}
 	Ok(())
-}
-
-pub(crate) fn process_transform(
-	w_model: SubWorld<(&Transform, &mut DefaultMat)>,
-){
-	for (_, (transform, material)) in &mut w_model.query::<(&Transform, &mut DefaultMat)>(){
-		let new_matrix = na::Matrix4::new_translation(&transform.translation)
-			* na::Matrix4::from(transform.rotation)
-			* na::Matrix4::from([
-				[transform.scale, 0.0, 0.0, 0.0],
-				[0.0, transform.scale, 0.0, 0.0],
-				[0.0, 0.0, transform.scale, 0.0],
-				[0.0, 0.0, 0.0, 1.0]
-			]);
-		
-		material.modelmatrix = new_matrix.into();
-		material.inverse_modelmatrix = new_matrix.try_inverse().unwrap().into();
-	}
 }

@@ -5,16 +5,19 @@ layout (location=0) in vec3 position;
 layout (location=1) in vec3 normal;
 layout (location=2) in vec2 texcoord;
 // INSTANCE
-layout (location=3) in mat4 model_matrix;
-layout (location=7) in mat4 inverse_model_matrix;
-layout (location=11) in uint texture_id;
-layout (location=12) in float metallic_in;
-layout (location=13) in float roughness_in;
+layout (location=3) in uint texture_id;
+layout (location=4) in float metallic_in;
+layout (location=5) in float roughness_in;
 
 layout (set=0, binding=0) uniform UniformBufferObject {
 	mat4 view_matrix;
 	mat4 projection_matrix;
 } ubo;
+
+layout( push_constant ) uniform PushConstants {
+	mat4 model_matrix;
+	mat4 inverse_model_matrix;
+} pc;
 
 layout (location=0) out vec2 uv;
 layout (location=1) out uint tex_id;
@@ -25,11 +28,11 @@ layout (location=5) out float out_metallic;
 layout (location=6) out float out_roughness;
 
 void main() {
-    vec4 worldpos = model_matrix * vec4(position, 1.0);
+    vec4 worldpos = pc.model_matrix * vec4(position, 1.0);
     gl_Position = ubo.projection_matrix * ubo.view_matrix * worldpos;
     uv = texcoord;//0
     tex_id = texture_id;//1
-    out_normal = transpose(mat3(inverse_model_matrix)) * normal;//2
+    out_normal = transpose(mat3(pc.inverse_model_matrix)) * normal;//2
     out_worldpos = vec3(worldpos);//3
     out_camera_coordinates =//4
 		- ubo.view_matrix[3][0] * vec3 (ubo.view_matrix[0][0],ubo.view_matrix[1][0],ubo.view_matrix[2][0])

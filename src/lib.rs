@@ -143,7 +143,6 @@ impl Despero {
 			.add_system(update_models_system)
 			.add_system(rendering_system)
 			.add_system(update_lights)
-			.add_system(process_transform)
 			.build();
 		// Execute setup-systems Schedule
 		setup_systems

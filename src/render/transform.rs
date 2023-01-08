@@ -15,3 +15,18 @@ impl Default for Transform {
 		}
 	}
 }
+
+impl Transform {
+	pub fn to_matrices(&self) -> (Matrix4<f32>, Matrix4<f32>) {
+		let new_matrix = Matrix4::new_translation(&self.translation)
+			* Matrix4::from(self.rotation)
+			* Matrix4::from([
+				[self.scale, 0.0, 0.0, 0.0],
+				[0.0, self.scale, 0.0, 0.0],
+				[0.0, 0.0, self.scale, 0.0],
+				[0.0, 0.0, 0.0, 1.0]
+			]);
+		
+		(new_matrix, new_matrix.try_inverse().unwrap())
+	}
+}

@@ -574,7 +574,7 @@ impl Renderer {
 				&[],
 			);
 			
-			for (_, (mesh, _material, _transform)) in &mut world.query::<(
+			for (_, (mesh, _material, transform)) in &mut world.query::<(
 				&Mesh, &DefaultMat, &Transform,
 			)>(){
 				if let Some(vertexbuffer) = &mesh.vertexbuffer {
@@ -600,6 +600,17 @@ impl Renderer {
 								1,
 								&[instancebuffer.buffer],
 								&[0],
+							);
+							
+							let transform_matrices = transform.to_matrices();
+							let transform_ptr = &transform_matrices as *const _ as *const u8;
+							let transform_slice = std::slice::from_raw_parts(transform_ptr, 128);
+							self.device.cmd_push_constants(
+								commandbuffer,
+								self.pipeline.layout,
+								vk::ShaderStageFlags::VERTEX,
+								0,
+								transform_slice,
 							);
 							
 							self.device.cmd_draw_indexed(

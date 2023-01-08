@@ -69,70 +69,22 @@ impl Pipeline {
 				offset: 24,
 				format: vk::Format::R32G32_SFLOAT,
 			},
-			vk::VertexInputAttributeDescription {
+			vk::VertexInputAttributeDescription{
 				binding: 1,
 				location: 3,
 				offset: 0,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 4,
-				offset: 16,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 5,
-				offset: 32,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 6,
-				offset: 48,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 7,
-				offset: 64,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 8,
-				offset: 80,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 9,
-				offset: 96,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription {
-				binding: 1,
-				location: 10,
-				offset: 112,
-				format: vk::Format::R32G32B32A32_SFLOAT,
-			},
-			vk::VertexInputAttributeDescription{
-				binding: 1,
-				location: 11,
-				offset: 128,
 				format: vk::Format::R8G8B8A8_UINT,
 			},
 			vk::VertexInputAttributeDescription{
 				binding: 1,
-				location: 12,
-				offset: 132,
+				location: 4,
+				offset: 4,
 				format: vk::Format::R32_SFLOAT,
 			},
 			vk::VertexInputAttributeDescription{
 				binding: 1,
-				location: 13,
-				offset: 136,
+				location: 5,
+				offset: 8,
 				format: vk::Format::R32_SFLOAT,
 			},
 		];
@@ -144,7 +96,7 @@ impl Pipeline {
 			},
 			vk::VertexInputBindingDescription {
 				binding: 1,
-				stride: 140,
+				stride: 12,
 				input_rate: vk::VertexInputRate::INSTANCE,
 			},
 		];
@@ -264,9 +216,17 @@ impl Pipeline {
 			descriptorsetlayout2,
 		];
 		
+		// Push Constants
+		let push_constants = [vk::PushConstantRange::builder()
+			.stage_flags(vk::ShaderStageFlags::VERTEX)
+			.offset(0)
+			.size(128)
+			.build()];
+		
 		// Pipeline layout
 		let pipelinelayout_info = vk::PipelineLayoutCreateInfo::builder()
-			.set_layouts(&desclayouts);
+			.set_layouts(&desclayouts)
+			.push_constant_ranges(&push_constants);
 			
 		let pipelinelayout = unsafe { logical_device.create_pipeline_layout(&pipelinelayout_info, None) }?;
 		
